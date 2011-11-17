@@ -5,6 +5,9 @@ import simplejson
 from exceptions import EventUnsupportException
 
 
+__docformat__ = "restructuredtext"
+
+
 class ErlyvideoStats(object):
     def __init__(self, host=None, recv_oct=None, sent_oct=None, addr=None, user_id=None, session_id=None):
         self.host = host

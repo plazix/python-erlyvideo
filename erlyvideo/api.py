@@ -7,10 +7,14 @@ from exceptions import APIErrorException
 
 # todo добавить поддержку коммерческой версии
 
-class ErlyvideoApi(object):
+
+__docformat__ = "restructuredtext"
+
+
+class FreeErlyvideoApi(object):
     API_STREAMS_URI = '/erlyvideo/api/streams/'
     API_STREAM_URI = '/erlyvideo/api/stream/%s/'
-    API_STREAM_HEALTH_URI = '/erlyvideo/api/stream_health/%s/' # true, {"error":"unknown"}
+    API_STREAM_HEALTH_URI = '/erlyvideo/api/stream_health/%s/'
 
     __opener = None
 
@@ -23,12 +27,23 @@ class ErlyvideoApi(object):
             self.__opener = build_opener()
 
     def __request(self, url):
-    	# todo добавить проверки
+        """
+        Запрос к серверу erlyvideo.
+
+        Возвращает распарсенный ответ сервера erlyvideo.
+
+        В случае ошибки обращение к серверу или если сервер возвращает ошибку, то бросается исключение APIErrorException
+        с информацией об ошибке.
+
+        :param url: сслыка на метод api
+        :return:
+        """
+        # todo добавить проверки
         data = self.__opener(url)
         data = simplejson.loads(''.join(data))
 
         if 'error' in data:
-        	raise APIErrorException(data['error'])
+            raise APIErrorException(data['error'])
         return data
 
     def get_filelist(self):
@@ -36,17 +51,33 @@ class ErlyvideoApi(object):
         pass
 
     def get_streams(self):
+        """
+        Информация о потоках
+        """
         data = self.__request(self.API_STREAMS_URI)
         return data['streams']
 
     def get_stream_health(self, name):
-        # todo написать
-        pass
+        """
+        :param name: имя потока
+        :return:
+        """
+        return self.__request(self.API_STREAM_URI % name)
 
     def get_stream(self, name):
+        """
+        Информация о потоке.
+
+        :param name: имя потока
+        """
         data = self.__request(self.API_STREAM_URI % name)
         return data['stream']
 
     def get_licenses(self):
         # todo написать
         pass
+
+
+class CommercialErlyvideoApi(FreeErlyvideoApi):
+    # todo написать
+    pass
